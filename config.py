@@ -4,11 +4,18 @@ Update these values before running the system.
 """
 
 # Sender identity
-SENDER_NAME = "YOUR_NAME"
-SENDER_TITLE = "YOUR_TITLE"
-SENDER_EMAIL = "your@gmail.com"
+SENDER_NAME = "Ryan"                            # UPDATE: your first name or full name
+SENDER_TITLE = "Founder"                        # UPDATE: your title
+SENDER_EMAIL = "ryan@nestnavigate.com"          # UPDATE: your Nest Navigate email
 WEBSITE_URL = "https://nestnavigate.com"
-BOOKING_LINK = "https://calendly.com/your-link"
+BOOKING_LINK = "https://calendly.com/nestnavigate"  # UPDATE: your booking link
+
+# Email signature — appended via {{signature}} tag in templates (optional)
+# UPDATE: paste your full signature here, use \n for line breaks
+EMAIL_SIGNATURE = """Ryan Sito
+Founder | Nest Navigate
+ryan@nestnavigate.com
+nestnavigate.com"""  # UPDATE: replace with your full signature
 
 # File paths
 LEADS_FILE = "leads/leads.csv"

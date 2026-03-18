@@ -1,11 +1,15 @@
-Subject: [SUBJECT_LINE — final touch, pattern interrupt or direct]
+Subject: Last note — first-time homebuyer partnerships | Nest Navigate
 
 Hi {{first_name}},
 
-[SHORT — 2-3 sentences max]
+I'll keep this short — I've reached out a couple times about connecting {{company}} with high-intent first-time homebuyers at key moments in their journey.
 
-[SINGLE CLEAR ASK — yes or no question works well here]
+If the timing isn't right, no worries at all. But if customer acquisition earlier in the funnel is something on your radar this year, I'd love to show you what we're building.
 
-[SOFT CLOSE — leave the door open, no hard sell]
+Is this something worth 20 minutes?
+
+{{booking_link}}
 
 {{sender_name}}
+{{sender_title}} | Nest Navigate
+{{website}}

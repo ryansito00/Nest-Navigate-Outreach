@@ -1,31 +1,38 @@
 # Outreach Automation Template — Nest Navigate
 
-> This file is the portable blueprint for the Nest Navigate email outreach system.
-> Paste this into a new Claude Code session along with brand/lead details to rebuild the full system instantly.
+> Portable blueprint for the Nest Navigate B2B email outreach system.
+> Paste into a new Claude Code session to rebuild the full system instantly.
 
 ---
 
 ## Brand Identity
 
 **Brand Name:** Nest Navigate
-**Sender Name:** [SENDER_NAME]
-**Sender Title:** [SENDER_TITLE]
-**Sender Email:** [SENDER_EMAIL]
-**Website:** [WEBSITE_URL]
-**Calendar/CTA Link:** [BOOKING_LINK]
+**Sender Name:** Ryan Sito
+**Sender Title:** Founder
+**Sender Email:** ryan@nestnavigate.com
+**Website:** https://nestnavigate.com
+**Calendar/CTA Link:** [UPDATE: your Calendly or booking link]
 
 **Value Proposition:**
-[One sentence — what does Nest Navigate do and who is it for?]
+Nest Navigate educates and supports first-time homebuyers through one of life's most stressful milestones, while helping brands show up at key moments to build trust and drive high-intent customer acquisition.
 
-**Target Audience:**
-[Who are these leads? E.g. homebuyers, real estate investors, agents, renters, etc.]
+**Target Audience (B2B):**
+Brands, franchise owners, and enterprise companies that want to reach high-intent first-time homebuyers *before and during* the homebuying journey:
+- Home services, inspection, moving, cleaning, insurance, warranties
+- Retail, furniture, appliances, home improvement
+- Financial services, mortgage, banking, credit
+- Lifestyle and wellness brands tied to stressful life transitions
+- Franchise owners focused on local customer acquisition
 
-**Tone:** [E.g. warm and professional / direct and concise / conversational]
+**Tone:** Direct, credible, and concise — peer-to-peer, not salesy. Respect their time.
 
-**Key Talking Points:**
-1. [Point 1]
-2. [Point 2]
-3. [Point 3]
+**Core Positioning:**
+Nest Navigate bridges the gap between:
+- Consumers navigating the stress and complexity of buying their first home
+- Brands that can support, simplify, and add value during that journey
+
+This creates timely, milestone-based engagement — more meaningful brand interactions rooted in trust, not interruption.
 
 ---
 
@@ -34,14 +41,13 @@
 **File:** `leads/leads.csv`
 
 **Expected CSV Columns:**
-- `first_name` — lead's first name (used in personalization)
-- `last_name` — lead's last name
-- `email` — primary email address
-- `company` — company or brokerage (if applicable)
-- `city` or `market` — geographic market (if applicable)
-- `[custom_field]` — any additional personalization fields
-
-> Adjust merge fields in email templates below to match your actual CSV column headers.
+- `first_name` — contact's first name
+- `last_name` — contact's last name
+- `email` — primary business email
+- `company` — brand or franchise name (used in personalization)
+- `title` — contact's role (optional, for context)
+- `industry` — sector/category (optional)
+- `status` — workflow status (default: `new`)
 
 ---
 
@@ -49,56 +55,86 @@
 
 ### Touch 1 — Day 0 (Initial Outreach)
 
-**Subject:** [SUBJECT_LINE_1]
+**Subject:** Unlock partnership + visibility with first-time homebuyers | Nest Navigate
 
 ```
 Hi {{first_name}},
 
-[OPENING — reference something relevant to them or their market]
+First-time homebuyers are one of the most high-intent consumer segments out there —
+yet most brands miss them entirely because they show up too late, after the decision
+is already made.
 
-[VALUE STATEMENT — what Nest Navigate does and why it matters to them]
+Nest Navigate changes that.
 
-[CTA — soft ask, low friction]
+We educate and support first-time homebuyers through one of life's most stressful
+milestones — and we bring brand partners in at the right moments along the way.
+Instead of interrupting people after the fact, you show up when they actually need
+you: before they sign, before they move in, before they choose who to trust.
 
-[SENDER_NAME]
-[SENDER_TITLE] | Nest Navigate
-[WEBSITE_URL]
+For brands in home services, financial services, retail, and beyond, that means:
+- High-intent leads at the start of the homebuying journey, not the end
+- Milestone-based touchpoints that feel helpful, not intrusive
+- A built-in trust signal from a platform they already rely on
+
+If {{company}} is focused on acquiring customers earlier in the funnel — and building
+real relationships with them — this could be a strong fit.
+
+Worth a 20-minute call to see if the timing's right?
+
+[BOOKING_LINK]
+
+[SIGNATURE]
 ```
 
 ---
 
 ### Touch 2 — Day 3 (Follow-Up)
 
-**Subject:** Re: [SUBJECT_LINE_1]
+**Subject:** Re: Unlock partnership + visibility with first-time homebuyers | Nest Navigate
 
 ```
 Hi {{first_name}},
 
-[BRIEF — acknowledge no response, not pushy]
+Wanted to resurface this in case it got buried.
 
-[REFRAME VALUE — different angle or social proof]
+The short version: buying a first home is one of the most stressful, expensive,
+confusing things a person does — and it creates a window where consumers are actively
+looking for brands they can trust across home services, insurance, financial products,
+furniture, you name it.
 
-[CTA — same or slightly different ask]
+Nest Navigate sits at that window. We guide first-time buyers through the process and
+introduce brand partners at the moments that actually matter.
 
-[SENDER_NAME]
+For {{company}}, that could mean reaching a warm, high-intent audience at the exact
+point they're making buying decisions — before your competitors are even in the picture.
+
+Happy to walk you through how it works. 20 minutes, no pressure.
+
+[BOOKING_LINK]
+
+[SIGNATURE]
 ```
 
 ---
 
 ### Touch 3 — Day 7 (Final Touch)
 
-**Subject:** [SUBJECT_LINE_3]
+**Subject:** Last note — first-time homebuyer partnerships | Nest Navigate
 
 ```
 Hi {{first_name}},
 
-[SHORT — respect their time]
+I'll keep this short — I've reached out a couple times about connecting {{company}}
+with high-intent first-time homebuyers at key moments in their journey.
 
-[SINGLE CLEAR ASK]
+If the timing isn't right, no worries at all. But if customer acquisition earlier in
+the funnel is something on your radar this year, I'd love to show you what we're building.
 
-[SOFT CLOSE — leave door open]
+Is this something worth 20 minutes?
 
-[SENDER_NAME]
+[BOOKING_LINK]
+
+[SIGNATURE]
 ```
 
 ---
@@ -107,7 +143,7 @@ Hi {{first_name}},
 
 | Touch | Send Day | Condition |
 |-------|----------|-----------|
-| Touch 1 | Day 0 | All new leads |
+| Touch 1 | Day 0 | All `status = new` leads |
 | Touch 2 | Day 3 | No reply to Touch 1 |
 | Touch 3 | Day 7 | No reply to Touch 2 |
 
@@ -115,9 +151,9 @@ Hi {{first_name}},
 
 ## System Configuration
 
-**Gmail Account:** [GMAIL_ADDRESS]
+**Gmail / Google Workspace Account:** ryan@nestnavigate.com
 **Google OAuth Credentials:** `credentials/credentials.json`
-**Scheduled Send Time:** [HH:MM] [TIMEZONE] on weekdays
+**Scheduled Send Time:** 9:00 AM weekdays
 
 ---
 
@@ -125,17 +161,18 @@ Hi {{first_name}},
 
 | Template Tag | CSV Column | Example |
 |---|---|---|
-| `{{first_name}}` | `first_name` | Sarah |
-| `{{last_name}}` | `last_name` | Johnson |
-| `{{company}}` | `company` | Keller Williams |
-| `{{market}}` | `city` | Austin |
+| `{{first_name}}` | `first_name` | Jane |
+| `{{last_name}}` | `last_name` | Smith |
+| `{{company}}` | `company` | Acme Home Services |
+| `{{title}}` | `title` | VP of Marketing |
+| `{{sender_name}}` | config | Ryan Sito |
+| `{{booking_link}}` | config | calendly.com/... |
+| `{{signature}}` | config | full email signature block |
 
 ---
 
 ## Activation
 
-Once brand details are filled in:
-
 1. Drop this file + `leads/leads.csv` into a new Claude Code project
-2. Say: *"Use this template to build the outreach system with these brand details: [paste details]"*
-3. Claude Code will generate: scripts, final email copy, scheduler, send logs
+2. Say: *"Use this template to rebuild the Nest Navigate outreach system"*
+3. Claude Code generates: scripts, final email copy, scheduler, send logs

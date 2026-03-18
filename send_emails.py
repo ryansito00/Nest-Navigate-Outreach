@@ -86,6 +86,7 @@ def render(template: str, lead: dict) -> str:
         "{{sender_title}}": config.SENDER_TITLE,
         "{{website}}": config.WEBSITE_URL,
         "{{booking_link}}": config.BOOKING_LINK,
+        "{{signature}}": config.EMAIL_SIGNATURE,
     }
     for tag, value in replacements.items():
         template = template.replace(tag, value)

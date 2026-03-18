@@ -1,11 +1,19 @@
-Subject: Re: [SUBJECT_LINE — match Touch 1 subject]
+Subject: Re: Unlock partnership + visibility with first-time homebuyers | Nest Navigate
 
 Hi {{first_name}},
 
-[BRIEF — acknowledge you sent a note last week, not pushy]
+Wanted to resurface this in case it got buried.
 
-[REFRAME — different angle or a quick result/proof point]
+The short version: buying a first home is one of the most stressful, expensive, confusing things a person does — and it creates a window where consumers are actively looking for brands they can trust across home services, insurance, financial products, furniture, you name it.
 
-[CTA — same ask or slightly lower friction version]
+Nest Navigate sits at that window. We guide first-time buyers through the process and introduce brand partners at the moments that actually matter.
+
+For {{company}}, that could mean reaching a warm, high-intent audience at the exact point they're making buying decisions — before your competitors are even in the picture.
+
+Happy to walk you through how it works. 20 minutes, no pressure.
+
+{{booking_link}}
 
 {{sender_name}}
+{{sender_title}} | Nest Navigate
+{{website}}
