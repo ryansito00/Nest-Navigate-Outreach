@@ -1,0 +1,11 @@
+Subject: Re: [SUBJECT_LINE — match Touch 1 subject]
+
+Hi {{first_name}},
+
+[BRIEF — acknowledge you sent a note last week, not pushy]
+
+[REFRAME — different angle or a quick result/proof point]
+
+[CTA — same ask or slightly lower friction version]
+
+{{sender_name}}

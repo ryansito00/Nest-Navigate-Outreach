@@ -1,0 +1,15 @@
+Subject: [SUBJECT_LINE — fill in after brand details confirmed]
+
+Hi {{first_name}},
+
+[OPENING — personalized to their situation or market]
+
+[VALUE STATEMENT — what Nest Navigate does and why it matters to them]
+
+[CTA — soft ask, e.g. "Would it make sense to connect for 15 minutes?"]
+
+[Booking link: {{booking_link}}]
+
+{{sender_name}}
+{{sender_title}} | Nest Navigate
+{{website}}

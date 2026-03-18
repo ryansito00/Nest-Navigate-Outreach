@@ -1,0 +1,11 @@
+Subject: [SUBJECT_LINE — final touch, pattern interrupt or direct]
+
+Hi {{first_name}},
+
+[SHORT — 2-3 sentences max]
+
+[SINGLE CLEAR ASK — yes or no question works well here]
+
+[SOFT CLOSE — leave the door open, no hard sell]
+
+{{sender_name}}
