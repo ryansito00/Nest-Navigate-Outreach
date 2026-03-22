@@ -198,9 +198,9 @@ def run():
 
     with open(leads_path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
-        raw_leads = list(reader)
+        raw_leads = list(reader)[150:200]
 
-    leads = []`n    BATCH_START, BATCH_END = 150, 200
+    leads = []
     for row in raw_leads:
         normalized = {COLUMN_MAP.get(k, k): v for k, v in row.items()}
         leads.append(normalized)
@@ -239,5 +239,7 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+
 
 
