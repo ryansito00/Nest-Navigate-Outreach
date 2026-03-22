@@ -2,9 +2,9 @@ Subject: Can we pre-buy $250 in gift cards from your location?
 
 Hi {{first_name}},
 
-I'm Ryan, Head of Rewards at Nest Navigate — we're building a Rewards network for first-time homebuyers. As users complete educational milestones on our platform, they earn rewards redeemable at select local partners. No cost to join.
+I'm Ryan, Head of Rewards at Nest Navigate. We're building a Rewards network for first-time homebuyers. As users complete educational milestones on our platform, they earn rewards redeemable at select local partners. No cost to join.
 
-$15 isn't life-changing, but that's not really the point — it's about giving buyers a moment of support from a local business during one of the most stressful times in their lives.
+$15 isn't life-changing, but that's not really the point. It's about giving buyers a moment of support from a local business during one of the most stressful times in their lives.
 
 {{ai_brand_fit}} We'd love to bring {{company}} into the network. We'd start by pre-buying $250 in gift cards from your location and promoting your brand to our California user base.
 
