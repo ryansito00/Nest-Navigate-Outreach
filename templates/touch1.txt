@@ -1,16 +1,14 @@
-Subject: Partnership opportunity | Nest Navigate
+Subject: Can we pre-buy $250 in gift cards from your location?
 
-Hello {{first_name}},
+Hi {{first_name}},
 
-I lead partnerships at Nest Navigate.
+I lead the Rewards program for Nest Navigate, a platform that guides first-time homebuyers through the homebuying journey using milestone-based education and rewards.
 
-We are building a platform that educates and supports first-time homebuyers as they prepare for one of the most important and stressful financial decisions of their lives, using short modules and milestone-based rewards to guide them toward homeownership.
+As users complete educational milestones on our platform, they earn rewards redeemable at select local partners. No cost for you to join. We're just looking for partners that want visibility on our platform and align with supporting first-time homebuyers. {{ai_brand_fit}}
 
-Along the way, we align with select brand partners to show up at the right moments, helping consumers feel more confident and prepared, while creating early trust and high-intent customer acquisition opportunities for our partners.
+We'd start by pre-buying $250 in gift cards from your location and promoting your brand on our site immediately. If our users are choosing your brand frequently, we'd be very open to making a more in-depth partnership.
 
-{{company_research}}
-
-Would you be open to a quick conversation this week or early next?
+Would love to hop on a call if this sounds interesting.
 
 Best,
-Ryan
+{{signature}}
