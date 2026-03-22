@@ -233,76 +233,34 @@ def create_draft(service, to: str, subject: str, body_html: str):
 # Google Sheets
 # ---------------------------------------------------------------------------
 
-def load_sheet_index(sheets_service) -> tuple[dict, int, int]:
+def load_sheet_index(sheets_service) -> dict:
     """
-    Returns (email_to_row, stage_col_idx, last_contacted_col_idx).
-    email_to_row maps email.lower() -> 1-based row number in the sheet.
-    col indices are 1-based.
+    Returns email.lower() -> 1-based row number.
+    Sheet layout: A=first_name, B=email, C=ai_brand_fit, G=status.
     """
     result = sheets_service.spreadsheets().values().get(
         spreadsheetId=config.SPREADSHEET_ID,
-        range="1:1",
-    ).execute()
-    header = [h.strip() for h in result.get("values", [[]])[0]]
-
-    def col_idx(name):
-        try:
-            return header.index(name) + 1  # 1-based
-        except ValueError:
-            return None
-
-    email_col    = col_idx("Email")
-    stage_col    = col_idx("Stage")
-    contacted_col = col_idx("Last Contacted")
-
-    if email_col is None:
-        log.error("Sheet header missing 'Email' column - cannot update sheet")
-        return {}, None, None
-
-    # Read just the email column to build row index
-    col_letter = _col_to_letter(email_col)
-    email_result = sheets_service.spreadsheets().values().get(
-        spreadsheetId=config.SPREADSHEET_ID,
-        range=f"{col_letter}:{col_letter}",
+        range="Sheet1!B:B",
     ).execute()
 
     email_to_row = {}
-    for i, row in enumerate(email_result.get("values", []), start=1):
+    for i, row in enumerate(result.get("values", []), start=1):
         if i == 1:
             continue  # skip header
         if row:
             email_to_row[row[0].strip().lower()] = i
 
-    return email_to_row, stage_col, contacted_col
+    return email_to_row
 
 
-def _col_to_letter(n: int) -> str:
-    result = ""
-    while n > 0:
-        n, rem = divmod(n - 1, 26)
-        result = chr(65 + rem) + result
-    return result
-
-
-def update_sheet_row(sheets_service, row_num: int, touch: int, stage_col: int, contacted_col: int):
-    today = date.today().isoformat()
-    stage = f"Touch {touch} Drafted"
-    updates = []
-    if stage_col:
-        updates.append({
-            "range": f"{_col_to_letter(stage_col)}{row_num}",
-            "values": [[stage]],
-        })
-    if contacted_col:
-        updates.append({
-            "range": f"{_col_to_letter(contacted_col)}{row_num}",
-            "values": [[today]],
-        })
-    if updates:
-        sheets_service.spreadsheets().values().batchUpdate(
-            spreadsheetId=config.SPREADSHEET_ID,
-            body={"valueInputOption": "USER_ENTERED", "data": updates},
-        ).execute()
+def update_sheet_row(sheets_service, row_num: int, touch: int):
+    status = f"Touch {touch} Drafted - {date.today().isoformat()}"
+    sheets_service.spreadsheets().values().update(
+        spreadsheetId=config.SPREADSHEET_ID,
+        range=f"Sheet1!G{row_num}",
+        valueInputOption="RAW",
+        body={"values": [[status]]},
+    ).execute()
 
 
 # ---------------------------------------------------------------------------
@@ -332,7 +290,7 @@ def run():
     signature_html = get_gmail_signature(gmail_service)
     log.info(f"Fetched Gmail signature ({len(signature_html)} chars)")
 
-    email_to_row, stage_col, contacted_col = load_sheet_index(sheets_service)
+    email_to_row = load_sheet_index(sheets_service)
 
     leads_path = Path(config.LEADS_FILE)
     if not leads_path.exists():
@@ -369,7 +327,7 @@ def run():
 
             row_num = email_to_row.get(email.lower())
             if row_num:
-                update_sheet_row(sheets_service, row_num, touch, stage_col, contacted_col)
+                update_sheet_row(sheets_service, row_num, touch)
                 log.info(f"Drafted Touch {touch} -> {first_name} <{email}> | Sheet row {row_num} updated")
             else:
                 log.warning(f"Drafted Touch {touch} -> {first_name} <{email}> | NOT found in sheet")
