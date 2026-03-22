@@ -136,7 +136,7 @@ def send_email(service, to: str, subject: str, body: str):
     message["subject"] = subject
 
     raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
-    service.users().messages().send(userId="me", body={"raw": raw}).execute()
+    service.users().drafts().create(userId="me", body={"message": {"raw": raw}}).execute()
 
 
 # ---------------------------------------------------------------------------
@@ -239,3 +239,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+
