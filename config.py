@@ -1,19 +1,19 @@
 """
-Nest Navigate Outreach — Configuration
+Nest Navigate Outreach - Configuration
 """
 
 # Sender identity
-SENDER_NAME = "Ryan"
-SENDER_TITLE = "Founder"
+SENDER_NAME = "Ryan Ramirez"
+SENDER_TITLE = "Head of Rewards"
 SENDER_EMAIL = "ryan@nestnavigate.com"
 WEBSITE_URL = "https://nestnavigate.com"
 BOOKING_LINK = "https://calendly.com/nestnavigate"
 
-# Email signature — appended via {{signature}} tag in templates
-EMAIL_SIGNATURE = """Ryan
-Founder | Nest Navigate
-ryan@nestnavigate.com
-nestnavigate.com"""
+# Email signature - appended via {{signature}} tag in templates
+EMAIL_SIGNATURE = """Ryan Ramirez
+Head of Rewards
+Nest Navigate | nestnavigate.com
+m) 571-338-7022"""
 
 # File paths
 LEADS_FILE = "leads/leads.csv"
@@ -26,7 +26,7 @@ TEMPLATES_DIR = "templates"
 TOUCH_2_DELAY_DAYS = 3
 TOUCH_3_DELAY_DAYS = 7
 
-# Send window — emails only go out during these hours (local time)
+# Send window - emails only go out during these hours (local time)
 SEND_HOUR_START = 9   # 9 AM
 SEND_HOUR_END = 17    # 5 PM
 SEND_WEEKDAYS_ONLY = True

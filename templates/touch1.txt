@@ -1,24 +1,16 @@
-Subject: Unlock partnership + visibility with first-time homebuyers | Nest Navigate
+Subject: Partnership opportunity | Nest Navigate
 
-Hi {{first_name}},
+Hello {{first_name}},
 
-First-time homebuyers are one of the most high-intent consumer segments out there — yet most brands miss them entirely because they show up too late, after the decision is already made.
+I lead partnerships at Nest Navigate.
 
-Nest Navigate changes that.
+We are building a platform that educates and supports first-time homebuyers as they prepare for one of the most important and stressful financial decisions of their lives, using short modules and milestone-based rewards to guide them toward homeownership.
 
-We educate and support first-time homebuyers through one of life's most stressful milestones — and we bring brand partners in at the right moments along the way. Instead of interrupting people after the fact, you show up when they actually need you: before they sign, before they move in, before they choose who to trust.
+Along the way, we align with select brand partners to show up at the right moments, helping consumers feel more confident and prepared, while creating early trust and high-intent customer acquisition opportunities for our partners.
 
-For brands in home services, financial services, retail, and beyond, that means:
-- High-intent leads at the start of the homebuying journey, not the end
-- Milestone-based touchpoints that feel helpful, not intrusive
-- A built-in trust signal from a platform they already rely on
+{{company_research}}
 
-If {{company}} is focused on acquiring customers earlier in the funnel — and building real relationships with them — this could be a strong fit.
+Would you be open to a quick conversation this week or early next?
 
-Worth a 20-minute call to see if the timing's right?
-
-{{booking_link}}
-
-{{sender_name}}
-{{sender_title}} | Nest Navigate
-{{website}}
+Best,
+Ryan

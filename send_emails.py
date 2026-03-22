@@ -85,7 +85,6 @@ def render(template: str, lead: dict) -> str:
         "{{sender_name}}": config.SENDER_NAME,
         "{{sender_title}}": config.SENDER_TITLE,
         "{{website}}": config.WEBSITE_URL,
-        "{{booking_link}}": config.BOOKING_LINK,
         "{{signature}}": config.EMAIL_SIGNATURE,
     }
     for tag, value in replacements.items():
@@ -187,9 +186,24 @@ def run():
         log.error(f"Lead file not found: {leads_path}")
         return
 
+    # Normalize Apollo export column names to internal keys
+    COLUMN_MAP = {
+        "First Name": "first_name",
+        "Last Name": "last_name",
+        "Email": "email",
+        "Company Name for Emails": "company",
+        "Title": "title",
+        "Industry": "industry",
+    }
+
     with open(leads_path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
-        leads = list(reader)
+        raw_leads = list(reader)
+
+    leads = []
+    for row in raw_leads:
+        normalized = {COLUMN_MAP.get(k, k): v for k, v in row.items()}
+        leads.append(normalized)
 
     sent_count = 0
     skip_count = 0

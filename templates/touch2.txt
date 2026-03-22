@@ -10,9 +10,7 @@ Nest Navigate sits at that window. We guide first-time buyers through the proces
 
 For {{company}}, that could mean reaching a warm, high-intent audience at the exact point they're making buying decisions — before your competitors are even in the picture.
 
-Happy to walk you through how it works. 20 minutes, no pressure.
-
-{{booking_link}}
+Happy to walk you through how it works. 20 minutes, no pressure — just let me know what works for you.
 
 {{sender_name}}
 {{sender_title}} | Nest Navigate
