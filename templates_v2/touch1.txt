@@ -1,4 +1,4 @@
-Subject: Can we pre-buy $250 in gift cards from your location?
+Subject: Can we pre-buy $250 in gift cards for your location?
 
 Hi {{first_name}},
 
