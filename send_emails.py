@@ -240,7 +240,7 @@ def load_sheet_index(sheets_service) -> dict:
     """
     result = sheets_service.spreadsheets().values().get(
         spreadsheetId=config.SPREADSHEET_ID,
-        range="Sheet1!B:B",
+        range="B:B",
     ).execute()
 
     email_to_row = {}
@@ -257,7 +257,7 @@ def update_sheet_row(sheets_service, row_num: int, touch: int):
     status = f"Touch {touch} Drafted - {date.today().isoformat()}"
     sheets_service.spreadsheets().values().update(
         spreadsheetId=config.SPREADSHEET_ID,
-        range=f"Sheet1!G{row_num}",
+        range=f"G{row_num}",
         valueInputOption="RAW",
         body={"values": [[status]]},
     ).execute()
