@@ -48,6 +48,11 @@ def get_credentials():
     creds = None
     if os.path.exists(config.TOKEN_FILE):
         creds = Credentials.from_authorized_user_file(config.TOKEN_FILE, config.GMAIL_SCOPES)
+        # If the saved token is missing any required scope, nuke it and re-auth
+        if creds and creds.scopes and not set(config.GMAIL_SCOPES).issubset(set(creds.scopes)):
+            log.info("Token missing required scopes - re-authenticating...")
+            os.remove(config.TOKEN_FILE)
+            creds = None
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
