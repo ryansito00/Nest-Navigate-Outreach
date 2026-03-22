@@ -27,9 +27,11 @@ TOUCH_2_DELAY_DAYS = 3
 TOUCH_3_DELAY_DAYS = 7
 
 # Send window - emails only go out during these hours (local time)
-SEND_HOUR_START = 9   # 9 AM
-SEND_HOUR_END = 17    # 5 PM
-SEND_WEEKDAYS_ONLY = True
+SEND_HOUR_START = 0   # 9 AM
+SEND_HOUR_END = 24    # 5 PM
+SEND_WEEKDAYS_ONLY = False
 
 # Gmail API scope
 GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+
+
