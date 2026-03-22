@@ -12,10 +12,10 @@ BOOKING_LINK = "https://calendly.com/nestnavigate"  # UPDATE: your booking link
 
 # Email signature — appended via {{signature}} tag in templates (optional)
 # UPDATE: paste your full signature here, use \n for line breaks
-EMAIL_SIGNATURE = """Ryan Sito
+EMAIL_SIGNATURE = """Ryan
 Founder | Nest Navigate
 ryan@nestnavigate.com
-nestnavigate.com"""  # UPDATE: replace with your full signature
+nestnavigate.com"""
 
 # File paths
 LEADS_FILE = "leads/leads.csv"

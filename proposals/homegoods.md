@@ -50,7 +50,7 @@ A 15-minute call to explore fit. If it makes sense, we move quickly — purchase
 
 ---
 
-**Ryan Sito**
+**Ryan**
 Founder | Nest Navigate
 ryan@nestnavigate.com
 nestnavigate.com
