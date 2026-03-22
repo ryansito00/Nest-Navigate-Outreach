@@ -11,6 +11,4 @@ We'd start by pre-buying $250 in gift cards from your location and promoting you
 Would love to hop on a call if this sounds interesting.
 
 Best,
-Ryan
-{{sender_title}} | Nest Navigate
-{{website}}
+{{signature}}
