@@ -1,17 +1,15 @@
 """
 Nest Navigate Outreach — Configuration
-Update these values before running the system.
 """
 
 # Sender identity
-SENDER_NAME = "Ryan"                            # UPDATE: your first name or full name
-SENDER_TITLE = "Founder"                        # UPDATE: your title
-SENDER_EMAIL = "ryan@nestnavigate.com"          # UPDATE: your Nest Navigate email
+SENDER_NAME = "Ryan"
+SENDER_TITLE = "Founder"
+SENDER_EMAIL = "ryan@nestnavigate.com"
 WEBSITE_URL = "https://nestnavigate.com"
-BOOKING_LINK = "https://calendly.com/nestnavigate"  # UPDATE: your booking link
+BOOKING_LINK = "https://calendly.com/nestnavigate"
 
-# Email signature — appended via {{signature}} tag in templates (optional)
-# UPDATE: paste your full signature here, use \n for line breaks
+# Email signature — appended via {{signature}} tag in templates
 EMAIL_SIGNATURE = """Ryan
 Founder | Nest Navigate
 ryan@nestnavigate.com
