@@ -32,6 +32,8 @@ SEND_HOUR_END = 24    # 5 PM
 SEND_WEEKDAYS_ONLY = False
 
 # Gmail API scope
-GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
+GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.compose"]
+
+
 
 

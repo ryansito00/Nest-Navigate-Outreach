@@ -200,7 +200,7 @@ def run():
         reader = csv.DictReader(f)
         raw_leads = list(reader)
 
-    leads = []
+    leads = []`n    BATCH_START, BATCH_END = 150, 200
     for row in raw_leads:
         normalized = {COLUMN_MAP.get(k, k): v for k, v in row.items()}
         leads.append(normalized)
@@ -208,7 +208,7 @@ def run():
     sent_count = 0
     skip_count = 0
 
-    for lead in leads:
+    for lead in leads[BATCH_START:BATCH_END]:
         email = lead.get("email", "").strip()
         status = lead.get("status", "new").strip().lower()
 
@@ -239,4 +239,5 @@ def run():
 
 if __name__ == "__main__":
     run()
+
 
