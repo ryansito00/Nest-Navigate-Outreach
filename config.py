@@ -9,11 +9,6 @@ SENDER_EMAIL = "ryan@nestnavigate.com"
 WEBSITE_URL = "https://nestnavigate.com"
 BOOKING_LINK = "https://calendly.com/nestnavigate"
 
-# Email signature - appended via {{signature}} tag in templates
-EMAIL_SIGNATURE = """Ryan Ramirez
-Head of Rewards
-Nest Navigate | nestnavigate.com
-m) 571-338-7022"""
 
 # File paths
 LEADS_FILE = "leads/leads.csv"
@@ -31,8 +26,15 @@ SEND_HOUR_START = 0   # 9 AM
 SEND_HOUR_END = 24    # 5 PM
 SEND_WEEKDAYS_ONLY = False
 
-# Gmail API scope
-GMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.compose"]
+# Google Sheets spreadsheet ID for lead tracking
+SPREADSHEET_ID = "1HuPcMhXKDzH2ikpQeZP6LFGt_aL63UtuOBsoQGx37HI"
+
+# API scopes
+GMAIL_SCOPES = [
+    "https://www.googleapis.com/auth/gmail.compose",
+    "https://www.googleapis.com/auth/gmail.settings.basic",
+    "https://www.googleapis.com/auth/spreadsheets",
+]
 
 
 

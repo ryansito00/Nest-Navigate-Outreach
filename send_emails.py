@@ -1,9 +1,11 @@
 """
 Nest Navigate Outreach - Email Drafter
-Reads leads.csv rows 151-200, generates AI brand fit, creates Gmail drafts.
+Reads leads.csv rows 151-200, generates AI brand fit, creates Gmail drafts,
+and updates the leads Google Sheet.
 """
 
 import csv
+import html as html_lib
 import os
 import base64
 import logging
@@ -31,6 +33,8 @@ BATCH_START = 150   # 0-indexed, so rows 151-200
 BATCH_END   = 200
 BATCH_SIZE  = 50
 
+_SIGNATURE_SENTINEL = "__EMAIL_SIG__"
+
 # Load Claude API key
 _key_path = Path("Claude NN Key.txt")
 CLAUDE_API_KEY = _key_path.read_text().strip() if _key_path.exists() else os.environ.get("ANTHROPIC_API_KEY", "")
@@ -40,7 +44,7 @@ CLAUDE_API_KEY = _key_path.read_text().strip() if _key_path.exists() else os.env
 # Auth
 # ---------------------------------------------------------------------------
 
-def get_gmail_service():
+def get_credentials():
     creds = None
     if os.path.exists(config.TOKEN_FILE):
         creds = Credentials.from_authorized_user_file(config.TOKEN_FILE, config.GMAIL_SCOPES)
@@ -52,7 +56,30 @@ def get_gmail_service():
             creds = flow.run_local_server(port=0)
         with open(config.TOKEN_FILE, "w") as f:
             f.write(creds.to_json())
-    return build("gmail", "v1", credentials=creds)
+    return creds
+
+
+def get_gmail_service():
+    return build("gmail", "v1", credentials=get_credentials())
+
+
+def get_sheets_service():
+    return build("sheets", "v4", credentials=get_credentials())
+
+
+# ---------------------------------------------------------------------------
+# Gmail signature
+# ---------------------------------------------------------------------------
+
+def get_gmail_signature(service) -> str:
+    try:
+        result = service.users().settings().sendAs().list(userId="me").execute()
+        for send_as in result.get("sendAs", []):
+            if send_as.get("isPrimary"):
+                return send_as.get("signature", "")
+    except Exception as e:
+        log.warning(f"Could not fetch Gmail signature: {e}")
+    return ""
 
 
 # ---------------------------------------------------------------------------
@@ -79,14 +106,17 @@ Rules:
 - Be specific to this company and industry
 - Connect to first-time homebuyers naturally acquiring this type of product/service
 - No fluff, no filler
-- Do not start with "I" or mention Nest Navigate"""
+- Do not start with "I" or mention Nest Navigate
+- Do not use em dashes"""
 
     response = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=100,
         messages=[{"role": "user", "content": prompt}],
     )
-    return response.content[0].text.strip()
+    text = response.content[0].text.strip()
+    # Strip any em dashes that slip through
+    return text.replace("\u2014", "-")
 
 
 # ---------------------------------------------------------------------------
@@ -106,14 +136,50 @@ def load_template(touch_number: int) -> dict:
     return {"subject": subject, "body": body}
 
 
-def render(template: str, lead: dict) -> str:
+def render_html(template_body: str, template_subject: str, lead: dict, signature_html: str = "") -> tuple[str, str]:
+    """Returns (subject, html_body)."""
+    body = template_body
+    subject = template_subject
+
+    # Swap signature placeholder for sentinel before escaping
+    body = body.replace("{{signature}}", _SIGNATURE_SENTINEL)
+
+    # Render all lead fields and standard config vars into both subject and body
     for key, value in lead.items():
-        template = template.replace(f"{{{{{key}}}}}", str(value) if value else "")
-    template = template.replace("{{signature}}", config.EMAIL_SIGNATURE)
-    template = template.replace("{{sender_name}}", config.SENDER_NAME)
-    template = template.replace("{{sender_title}}", config.SENDER_TITLE)
-    template = template.replace("{{website}}", config.WEBSITE_URL)
-    return template
+        placeholder = f"{{{{{key}}}}}"
+        val = str(value) if value else ""
+        body = body.replace(placeholder, val)
+        subject = subject.replace(placeholder, val)
+
+    for placeholder, val in [
+        ("{{sender_name}}", config.SENDER_NAME),
+        ("{{sender_title}}", config.SENDER_TITLE),
+        ("{{website}}", config.WEBSITE_URL),
+    ]:
+        body = body.replace(placeholder, val)
+        subject = subject.replace(placeholder, val)
+
+    # Strip em dashes
+    body = body.replace("\u2014", "-")
+    subject = subject.replace("\u2014", "-")
+
+    # HTML-escape the body (sentinel has no special HTML chars so it survives)
+    escaped = html_lib.escape(body, quote=False)
+
+    # Inject real HTML signature
+    escaped = escaped.replace(_SIGNATURE_SENTINEL, signature_html)
+
+    # Convert paragraph breaks then line breaks
+    escaped = escaped.replace("\n\n", "</p><p>")
+    escaped = escaped.replace("\n", "<br>")
+
+    html_body = (
+        '<html><body style="font-family:Arial,sans-serif;font-size:14px;color:#000000;line-height:1.5">'
+        f"<p>{escaped}</p>"
+        "</body></html>"
+    )
+
+    return subject, html_body
 
 
 # ---------------------------------------------------------------------------
@@ -149,13 +215,89 @@ def append_send_log(email: str, touch: int, sent_date: date):
 # Gmail draft
 # ---------------------------------------------------------------------------
 
-def create_draft(service, to: str, subject: str, body: str):
-    message = MIMEText(body, "plain")
+def create_draft(service, to: str, subject: str, body_html: str):
+    message = MIMEText(body_html, "html")
     message["to"]      = to
     message["from"]    = f"{config.SENDER_NAME} <{config.SENDER_EMAIL}>"
     message["subject"] = subject
     raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
     service.users().drafts().create(userId="me", body={"message": {"raw": raw}}).execute()
+
+
+# ---------------------------------------------------------------------------
+# Google Sheets
+# ---------------------------------------------------------------------------
+
+def load_sheet_index(sheets_service) -> tuple[dict, int, int]:
+    """
+    Returns (email_to_row, stage_col_idx, last_contacted_col_idx).
+    email_to_row maps email.lower() -> 1-based row number in the sheet.
+    col indices are 1-based.
+    """
+    result = sheets_service.spreadsheets().values().get(
+        spreadsheetId=config.SPREADSHEET_ID,
+        range="1:1",
+    ).execute()
+    header = [h.strip() for h in result.get("values", [[]])[0]]
+
+    def col_idx(name):
+        try:
+            return header.index(name) + 1  # 1-based
+        except ValueError:
+            return None
+
+    email_col    = col_idx("Email")
+    stage_col    = col_idx("Stage")
+    contacted_col = col_idx("Last Contacted")
+
+    if email_col is None:
+        log.error("Sheet header missing 'Email' column - cannot update sheet")
+        return {}, None, None
+
+    # Read just the email column to build row index
+    col_letter = _col_to_letter(email_col)
+    email_result = sheets_service.spreadsheets().values().get(
+        spreadsheetId=config.SPREADSHEET_ID,
+        range=f"{col_letter}:{col_letter}",
+    ).execute()
+
+    email_to_row = {}
+    for i, row in enumerate(email_result.get("values", []), start=1):
+        if i == 1:
+            continue  # skip header
+        if row:
+            email_to_row[row[0].strip().lower()] = i
+
+    return email_to_row, stage_col, contacted_col
+
+
+def _col_to_letter(n: int) -> str:
+    result = ""
+    while n > 0:
+        n, rem = divmod(n - 1, 26)
+        result = chr(65 + rem) + result
+    return result
+
+
+def update_sheet_row(sheets_service, row_num: int, touch: int, stage_col: int, contacted_col: int):
+    today = date.today().isoformat()
+    stage = f"Touch {touch} Drafted"
+    updates = []
+    if stage_col:
+        updates.append({
+            "range": f"{_col_to_letter(stage_col)}{row_num}",
+            "values": [[stage]],
+        })
+    if contacted_col:
+        updates.append({
+            "range": f"{_col_to_letter(contacted_col)}{row_num}",
+            "values": [[today]],
+        })
+    if updates:
+        sheets_service.spreadsheets().values().batchUpdate(
+            spreadsheetId=config.SPREADSHEET_ID,
+            body={"valueInputOption": "USER_ENTERED", "data": updates},
+        ).execute()
 
 
 # ---------------------------------------------------------------------------
@@ -177,8 +319,15 @@ def determine_touch(email: str, send_log: dict) -> int | None:
 
 
 def run():
-    service  = get_gmail_service()
-    send_log = load_send_log()
+    creds          = get_credentials()
+    gmail_service  = build("gmail", "v1", credentials=creds)
+    sheets_service = build("sheets", "v4", credentials=creds)
+    send_log       = load_send_log()
+
+    signature_html = get_gmail_signature(gmail_service)
+    log.info(f"Fetched Gmail signature ({len(signature_html)} chars)")
+
+    email_to_row, stage_col, contacted_col = load_sheet_index(sheets_service)
 
     leads_path = Path(config.LEADS_FILE)
     if not leads_path.exists():
@@ -208,12 +357,18 @@ def run():
         lead["ai_brand_fit"] = ai_brand_fit
 
         try:
-            tmpl    = load_template(touch)
-            subject = render(tmpl["subject"], lead)
-            body    = render(tmpl["body"], lead)
-            create_draft(service, email, subject, body)
+            tmpl             = load_template(touch)
+            subject, body_html = render_html(tmpl["body"], tmpl["subject"], lead, signature_html)
+            create_draft(gmail_service, email, subject, body_html)
             append_send_log(email, touch, date.today())
-            log.info(f"Drafted Touch {touch} -> {first_name} <{email}>")
+
+            row_num = email_to_row.get(email.lower())
+            if row_num:
+                update_sheet_row(sheets_service, row_num, touch, stage_col, contacted_col)
+                log.info(f"Drafted Touch {touch} -> {first_name} <{email}> | Sheet row {row_num} updated")
+            else:
+                log.warning(f"Drafted Touch {touch} -> {first_name} <{email}> | NOT found in sheet")
+
             drafted += 1
             time.sleep(0.5)
         except Exception as e:
