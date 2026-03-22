@@ -229,12 +229,12 @@ def run():
             body = render(tmpl["body"], lead)
             send_email(service, email, subject, body)
             append_send_log(email, touch, date.today())
-            log.info(f"Sent Touch {touch} → {email}")
+            log.info(f"Drafted Touch {touch} → {email}")
             sent_count += 1
         except Exception as e:
             log.error(f"Failed to send Touch {touch} to {email}: {e}")
 
-    log.info(f"Done. Sent: {sent_count} | Skipped: {skip_count}")
+    log.info(f"Done. Drafted: {sent_count} | Skipped: {skip_count}")
 
 
 if __name__ == "__main__":
