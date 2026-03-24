@@ -173,9 +173,13 @@ Would love to hop on a call if this sounds interesting.
 
 Best,
 Ryan
-Founder | Nest Navigate
-ryan@nestnavigate.com
-nestnavigate.com"""
+
+--
+
+Ryan Ramirez
+Head of Rewards
+Nest Navigate (www.nestnavigate.com) | LinkedIn (linkedin.com/company/nest-navigate/)
+m) 571-338-7022"""
 
         try:
             create_draft(service, email, subject, body)
