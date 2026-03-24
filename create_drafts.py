@@ -24,7 +24,10 @@ PROGRESS_FILE  = "leads/progress.json"
 CREDENTIALS    = "credentials.json"
 TOKEN_FILE     = "token.json"
 BATCH_SIZE     = 100
-SCOPES         = ["https://www.googleapis.com/auth/gmail.compose"]
+SCOPES         = [
+    "https://www.googleapis.com/auth/gmail.compose",
+    "https://www.googleapis.com/auth/gmail.settings.basic",
+]
 
 # ── Nest Navigate system context ───────────────────────────────────────────────
 NN_SYSTEM = """
@@ -103,6 +106,16 @@ def authenticate():
             f.write(creds.to_json())
     return creds
 
+def get_gmail_signature(service) -> str:
+    try:
+        result = service.users().settings().sendAs().list(userId="me").execute()
+        for send_as in result.get("sendAs", []):
+            if send_as.get("isPrimary"):
+                return send_as.get("signature", "")
+    except Exception as e:
+        print(f"  [could not fetch signature: {e}]")
+    return ""
+
 def create_draft(service, to_email: str, subject: str, body: str):
     message = MIMEText(body)
     message["to"] = to_email
@@ -131,8 +144,9 @@ def main():
     print(f"Today: rows {start_row + 1}–{start_row + len(batch)} of {total}")
     print(f"Remaining after today: {remaining_after}\n")
 
-    creds   = authenticate()
-    service = build("gmail", "v1", credentials=creds)
+    creds     = authenticate()
+    service   = build("gmail", "v1", credentials=creds)
+    signature = get_gmail_signature(service)
 
     drafted = 0
     skipped = 0
@@ -176,10 +190,7 @@ Ryan
 
 --
 
-Ryan Ramirez
-Head of Rewards
-Nest Navigate (www.nestnavigate.com) | LinkedIn (linkedin.com/company/nest-navigate/)
-m) 571-338-7022"""
+{signature}"""
 
         try:
             create_draft(service, email, subject, body)
