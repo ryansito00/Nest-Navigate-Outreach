@@ -197,7 +197,13 @@ Ryan
 
 --
 
-{signature}"""
+$250 for your location? Let's chat
+https://calendly.com/ryan-nestnavigate/30min
+
+Ryan Ramirez
+Head of Rewards
+Nest Navigate (www.nestnavigate.com) | LinkedIn (linkedin.com/company/nest-navigate/)
+m) 571-338-7022"""
 
         try:
             create_draft(service, email, subject, body)
