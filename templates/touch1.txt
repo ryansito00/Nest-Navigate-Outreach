@@ -1,0 +1,16 @@
+Subject: Partnership opportunity | Nest Navigate
+
+Hello {{first_name}},
+
+I lead partnerships at Nest Navigate.
+
+We are building a platform that educates and supports first-time homebuyers as they prepare for one of the most important and stressful financial decisions of their lives, using short modules and milestone-based rewards to guide them toward homeownership.
+
+Along the way, we align with select brand partners to show up at the right moments, helping consumers feel more confident and prepared, while creating early trust and high-intent customer acquisition opportunities for our partners.
+
+{{company_research}}
+
+Would you be open to a quick conversation this week or early next?
+
+Best,
+Ryan
