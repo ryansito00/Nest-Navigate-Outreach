@@ -55,6 +55,9 @@ The API key is read from the environment variable `ANTHROPIC_API_KEY`.
 cd "C:\Users\ryans\OneDrive\Desktop\Automated Outreach\Nest-Navigate-Outreach"
 ```
 
+## Email writing rules
+- NEVER use em dashes (—) in emails. Use a comma, period, or rewrite the sentence instead.
+
 ## Common errors and fixes
 
 | Error | Fix |
