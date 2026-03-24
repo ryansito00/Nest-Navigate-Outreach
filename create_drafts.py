@@ -11,6 +11,7 @@ import base64
 import os
 import time
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -24,17 +25,10 @@ PROGRESS_FILE  = "leads/progress.json"
 CREDENTIALS    = "credentials.json"
 TOKEN_FILE     = "token.json"
 BATCH_SIZE     = 100
-SCOPES         = ["https://www.googleapis.com/auth/gmail.compose"]
-
-SIGNATURE = """--
-
-$250 for your location? Let's chat
-https://calendly.com/ryan-nestnavigate/30min
-
-Ryan Ramirez
-Head of Rewards
-Nest Navigate (www.nestnavigate.com) | LinkedIn (linkedin.com/company/nest-navigate/)
-m) 571-338-7022"""
+SCOPES         = [
+    "https://www.googleapis.com/auth/gmail.compose",
+    "https://www.googleapis.com/auth/gmail.settings.basic",
+]
 
 # ── Nest Navigate system context ───────────────────────────────────────────────
 NN_SYSTEM = """
@@ -113,11 +107,28 @@ def authenticate():
             f.write(creds.to_json())
     return creds
 
-def create_draft(service, to_email: str, subject: str, body: str):
-    message = MIMEText(body)
-    message["to"] = to_email
-    message["subject"] = subject
-    raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
+def get_gmail_signature(service) -> str:
+    try:
+        result = service.users().settings().sendAs().list(userId="me").execute()
+        for send_as in result.get("sendAs", []):
+            if send_as.get("isPrimary"):
+                return send_as.get("signature", "")
+    except Exception as e:
+        print(f"  [could not fetch signature: {e}]")
+    return ""
+
+def _build_html(plain_body: str, signature_html: str) -> str:
+    html = plain_body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    html = html.replace("\n", "<br>\n")
+    return f"<div>{html}</div><br>{signature_html}"
+
+def create_draft(service, to_email: str, subject: str, plain_body: str, signature_html: str):
+    msg = MIMEMultipart("alternative")
+    msg["to"] = to_email
+    msg["subject"] = subject
+    msg.attach(MIMEText(plain_body, "plain"))
+    msg.attach(MIMEText(_build_html(plain_body, signature_html), "html"))
+    raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
     service.users().drafts().create(
         userId="me", body={"message": {"raw": raw}}
     ).execute()
@@ -143,6 +154,9 @@ def main():
 
     creds   = authenticate()
     service = build("gmail", "v1", credentials=creds)
+
+    signature_html = get_gmail_signature(service)
+    print(f"  [Signature fetched: {len(signature_html)} chars]\n")
 
     drafted = 0
     skipped = 0
@@ -182,12 +196,10 @@ We'd start by pre-buying $250 in gift cards from your location and promoting you
 Would love to hop on a call if this sounds interesting.
 
 Best,
-Ryan
-
-{SIGNATURE}"""
+Ryan"""
 
         try:
-            create_draft(service, email, subject, body)
+            create_draft(service, email, subject, body, signature_html)
             drafted += 1
             save_progress(abs_row + 1)
             print(f"    ✓ Draft created")
