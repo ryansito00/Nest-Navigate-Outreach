@@ -116,23 +116,15 @@ def get_gmail_signature(service) -> str:
         print(f"  [could not fetch signature: {e}]")
     return ""
 
-def create_draft(service, to_email: str, subject: str, plain_body: str, signature_html: str):
-    paragraphs = plain_body.strip().split("\n\n")
-    html_body = "".join(f"<p>{p.replace(chr(10), '<br>')}</p>" for p in paragraphs)
-    html_content = (
-        f'<div dir="ltr">'
-        f'{html_body}'
-        f'<br>'
-        f'<div class="gmail_signature" data-smartmail="gmail_signature">'
-        f'{signature_html}'
-        f'</div>'
-        f'</div>'
-    )
+def create_draft(service, to_email: str, subject: str, body: str, html_signature: str):
+    body_html = body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    body_html = body_html.replace("\n", "<br>")
+    full_content = f"<html><body><p>{body_html}</p>{html_signature}</body></html>"
 
     msg = EmailMessage()
     msg["To"] = to_email
     msg["Subject"] = subject
-    msg.set_content(html_content, subtype="html")
+    msg.add_alternative(full_content, subtype="html")
 
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
     service.users().drafts().create(
@@ -161,8 +153,8 @@ def main():
     creds   = authenticate()
     service = build("gmail", "v1", credentials=creds)
 
-    signature_html = get_gmail_signature(service)
-    print(f"  [Signature fetched: {len(signature_html)} chars]\n")
+    html_signature = get_gmail_signature(service)
+    print(f"  [Signature fetched: {len(html_signature)} chars]\n")
 
     drafted = 0
     skipped = 0
@@ -205,7 +197,7 @@ Best,
 Ryan"""
 
         try:
-            create_draft(service, email, subject, body, signature_html)
+            create_draft(service, email, subject, body, html_signature)
             drafted += 1
             save_progress(abs_row + 1)
             print(f"    ✓ Draft created")
