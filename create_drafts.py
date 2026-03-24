@@ -24,10 +24,7 @@ PROGRESS_FILE  = "leads/progress.json"
 CREDENTIALS    = "credentials.json"
 TOKEN_FILE     = "token.json"
 BATCH_SIZE     = 100
-SCOPES         = [
-    "https://www.googleapis.com/auth/gmail.compose",
-    "https://www.googleapis.com/auth/gmail.settings.basic",
-]
+SCOPES         = ["https://www.googleapis.com/auth/gmail.compose"]
 
 # ── Nest Navigate system context ───────────────────────────────────────────────
 NN_SYSTEM = """
@@ -52,7 +49,7 @@ def load_progress() -> dict:
     if os.path.exists(PROGRESS_FILE):
         with open(PROGRESS_FILE, "r") as f:
             return json.load(f)
-    return {"last_row": 150}  # First 150 already sent
+    return {"last_row": 150}
 
 def save_progress(row_index: int):
     with open(PROGRESS_FILE, "w") as f:
@@ -106,30 +103,8 @@ def authenticate():
             f.write(creds.to_json())
     return creds
 
-def get_gmail_signature(service) -> str:
-    try:
-        result = service.users().settings().sendAs().list(userId="me").execute()
-        for send_as in result.get("sendAs", []):
-            if send_as.get("isPrimary"):
-                return send_as.get("signature", "")
-    except Exception as e:
-        print(f"  [could not fetch signature: {e}]")
-    return ""
-
-def _build_html(plain_body: str, signature_html: str) -> str:
-    html = plain_body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    html = html.replace("\n", "<br>\n")
-    return (
-        "<html><body>"
-        f"<div style='font-family:Arial,sans-serif;font-size:14px;line-height:1.5;'>{html}</div>"
-        "<br>"
-        f"{signature_html}"
-        "</body></html>"
-    )
-
-def create_draft(service, to_email: str, subject: str, plain_body: str, signature_html: str):
-    html_content = _build_html(plain_body, signature_html)
-    msg = MIMEText(html_content, "html", "utf-8")
+def create_draft(service, to_email: str, subject: str, body: str):
+    msg = MIMEText(body, "plain", "utf-8")
     msg["to"] = to_email
     msg["subject"] = subject
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
@@ -158,9 +133,6 @@ def main():
 
     creds   = authenticate()
     service = build("gmail", "v1", credentials=creds)
-
-    signature_html = get_gmail_signature(service)
-    print(f"  [Signature fetched: {len(signature_html)} chars]\n")
 
     drafted = 0
     skipped = 0
@@ -203,7 +175,7 @@ Best,
 Ryan"""
 
         try:
-            create_draft(service, email, subject, body, signature_html)
+            create_draft(service, email, subject, body)
             drafted += 1
             save_progress(abs_row + 1)
             print(f"    ✓ Draft created")
