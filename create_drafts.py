@@ -18,7 +18,7 @@ from googleapiclient.discovery import build
 import anthropic
 
 # ── Config ─────────────────────────────────────────────────────────────────────
-CLAUDE_API_KEY = "PASTE_CLAUDE_KEY_HERE"
+CLAUDE_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 LEADS_FILE     = "leads/Nest Navigate 1k Lead List v1.csv"
 PROGRESS_FILE  = "leads/progress.json"
 CREDENTIALS    = "credentials.json"
