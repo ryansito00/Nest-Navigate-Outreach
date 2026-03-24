@@ -117,10 +117,17 @@ def get_gmail_signature(service) -> str:
     return ""
 
 def create_draft(service, to_email: str, subject: str, plain_body: str, signature_html: str):
-    # Convert plain text body to HTML paragraphs
     paragraphs = plain_body.strip().split("\n\n")
     html_body = "".join(f"<p>{p.replace(chr(10), '<br>')}</p>" for p in paragraphs)
-    html_content = f'<div dir="ltr">{html_body}<br>{signature_html}</div>'
+    html_content = (
+        f'<div dir="ltr">'
+        f'{html_body}'
+        f'<br>'
+        f'<div class="gmail_signature" data-smartmail="gmail_signature">'
+        f'{signature_html}'
+        f'</div>'
+        f'</div>'
+    )
 
     msg = EmailMessage()
     msg["To"] = to_email
