@@ -11,7 +11,6 @@ import base64
 import os
 import time
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -120,14 +119,19 @@ def get_gmail_signature(service) -> str:
 def _build_html(plain_body: str, signature_html: str) -> str:
     html = plain_body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     html = html.replace("\n", "<br>\n")
-    return f"<div>{html}</div><br>{signature_html}"
+    return (
+        "<html><body>"
+        f"<div style='font-family:Arial,sans-serif;font-size:14px;line-height:1.5;'>{html}</div>"
+        "<br>"
+        f"{signature_html}"
+        "</body></html>"
+    )
 
 def create_draft(service, to_email: str, subject: str, plain_body: str, signature_html: str):
-    msg = MIMEMultipart("alternative")
+    html_content = _build_html(plain_body, signature_html)
+    msg = MIMEText(html_content, "html", "utf-8")
     msg["to"] = to_email
     msg["subject"] = subject
-    msg.attach(MIMEText(plain_body, "plain"))
-    msg.attach(MIMEText(_build_html(plain_body, signature_html), "html"))
     raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
     service.users().drafts().create(
         userId="me", body={"message": {"raw": raw}}
