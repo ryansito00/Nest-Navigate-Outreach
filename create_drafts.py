@@ -9,6 +9,7 @@ import csv
 import json
 import base64
 import os
+import re
 import time
 from email.mime.text import MIMEText
 from google.oauth2.credentials import Credentials
@@ -111,7 +112,13 @@ def get_gmail_signature(service) -> str:
         result = service.users().settings().sendAs().list(userId="me").execute()
         for send_as in result.get("sendAs", []):
             if send_as.get("isPrimary"):
-                return send_as.get("signature", "")
+                html = send_as.get("signature", "")
+                # Strip HTML tags and decode common entities
+                text = re.sub(r"<[^>]+>", "", html)
+                text = text.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&nbsp;", " ").replace("&#39;", "'").replace("&quot;", '"')
+                # Collapse whitespace/blank lines
+                text = re.sub(r"\n{3,}", "\n\n", text.strip())
+                return text
     except Exception as e:
         print(f"  [could not fetch signature: {e}]")
     return ""
